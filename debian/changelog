@@ -1,0 +1,5 @@
+ftimes (3.10.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #468940)
+
+ -- Mike Mattice <mattice@debian.org>  Wed, 22 Jan 2014 13:11:31 -0600

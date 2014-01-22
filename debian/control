@@ -1,0 +1,14 @@
+Source: ftimes
+Section: unknown
+Priority: extra
+Maintainer: Mike Mattice <mattice@debian.org>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev
+Standards-Version: 3.9.2
+Homepage: http://ftimes.sourceforge.net/
+
+Package: ftimes
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: File Topography and Integrity Monitoring on an Enterprise Scale
+ system baselining and evidence collection tool that is lightweight,
+ flexible, and conducive to intrusion analysis
