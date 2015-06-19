@@ -246,6 +246,9 @@
 /* Define to 1 if embedded Perl needs XSUB.h. */
 #undef USE_EMBEDDED_PERL_XSUB
 
+/* Define to 1 if embedded Python 3.X.X support is enabled. */
+#undef USE_EMBEDDED_PYTHON
+
 /* Define to 1 if file hooks are enabled. */
 #undef USE_FILE_HOOKS
 

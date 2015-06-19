@@ -633,6 +633,9 @@ hook_incs
 hook_srcs
 xmagic_incs
 xmagic_srcs
+python_libflags
+python_incflags
+python_cflags
 perl_libflags
 perl_incflags
 perl_cflags
@@ -731,6 +734,7 @@ with_klel
 with_ssl
 with_pcre
 with_perl
+with_python
 enable_xmagic
 enable_file_hooks
 enable_hash_pre_msmc
@@ -1379,6 +1383,7 @@ Optional Packages:
   --with-pcre=DIR         Use PCRE with includes and libs from DIR/include and DIR/lib
   --without-pcre          Disable PCRE support
   --with-perl=PATH        Embed Perl using PATH as the reference version (disabled by default)
+  --with-python=PATH      Embed Python using PATH as the reference version (disabled by default)
   --with-everything       Install everything (disabled by default)
   --with-server-side      Install server-side components (disabled by default)
   --with-all-tools        Install all utilities (disabled by default)
@@ -5270,9 +5275,89 @@ $as_echo "no" >&6; }
 fi
 
 
+python_version=""
+python_version_major="0"
+python_version_floor="3"
+
+CheckPython()
+{
+  REFERENCE_PYTHON=${1}
+  if test ! -f "${REFERENCE_PYTHON}" ; then
+    return 1
+  fi
+  if test ! -x "${REFERENCE_PYTHON}" ; then
+    return 1
+  fi
+  python_version=`${REFERENCE_PYTHON} --version 2>&1 | awk '/^Python [0-9]/{print $2}'`
+  if test -n "${python_version}" ; then
+    python_version_major=`echo ${python_version} | awk -F. '{print $1}'`
+  fi
+  return 0
+}
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for embedded Python support" >&5
+$as_echo_n "checking for embedded Python support... " >&6; }
+
+# Check whether --with-python was given.
+if test "${with_python+set}" = set; then :
+  withval=$with_python;
+                        case `echo ${withval} | tr "A-Z" "a-z"` in
+    no)
+      use_python="0"
+      ;;
+    *)
+      use_python="1"
+      CheckPython "${withval}"
+      ;;
+    esac
+
+else
+
+    use_python="0"
+
+
+fi
+
+if test ${use_python} -ne 0 ; then
+  case "${target_os}" in
+  *mingw*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: this feature can not be enabled on this platform (aborting)" >&5
+$as_echo "this feature can not be enabled on this platform (aborting)" >&6; }
+    exit 1
+    ;;
+  esac
+
+$as_echo "#define USE_EMBEDDED_PYTHON 1" >>confdefs.h
+
+  if test -z "${python_version}" -o "${python_version_major}" -lt "${python_version_floor}" ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: missing or incomplete" >&5
+$as_echo "missing or incomplete" >&6; }
+    echo
+    echo "Unable to locate required Python 3.X.X components. Use --with-python=PATH to"
+    echo "specify a known/different Python 3.X.X binary. In particular, Python's major"
+    echo "version number must be 3 or higher."
+    echo
+    exit 1
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${python_version}" >&5
+$as_echo "${python_version}" >&6; }
+    python_cflags=`${REFERENCE_PYTHON}-config --cflags`
+    python_incflags=`${REFERENCE_PYTHON}-config --includes`
+    python_libflags=`${REFERENCE_PYTHON}-config --ldflags`
+
+
+
+  fi
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
 if test ${use_klel} -eq 1 ; then
   OLD_CFLAGS=${CFLAGS}
   OLD_LIBS=${LIBS}
+  OLD_LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ; LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${kleldir}/lib" ; export LD_LIBRARY_PATH
   CFLAGS="${CFLAGS} ${klel_incflags} ${pcre_incflags}"
   LIBS="${LIBS} ${klel_libflags} ${pcre_libflags}"
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether or not KLEL release number is ok" >&5
@@ -5313,6 +5398,7 @@ $as_echo "no (0x10100800 or higher required)" >&6; }
   fi
   CFLAGS=${OLD_CFLAGS}
   LIBS=${OLD_LIBS}
+  LD_LIBRARY_PATH=${OLD_LD_LIBRARY_PATH} ; export LD_LIBRARY_PATH
 fi
 
 
@@ -5751,14 +5837,14 @@ fi
 if test ${install_map} -ne 0 ; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-  map_list="ftimes-cat ftimes-cmp2dbi ftimes-cmp2diff ftimes-encoder ftimes-grabber ftimes-map2dbi ftimes-map2mac ftimes-proximo ftimes-sizimus ftimes-sortini ftimes-xformer ftimes-xpa hashcp tarmap zipmap"
+  map_list="ftimes-bimvl ftimes-cat ftimes-cmp2dbi ftimes-cmp2diff ftimes-encoder ftimes-grabber ftimes-map2dbi ftimes-map2mac ftimes-proximo ftimes-sizimus ftimes-sortini ftimes-xformer ftimes-xpa hashcp tarmap zipmap"
   doc_subdirs="${doc_subdirs} ${map_list}"
   doc_makefiles="${doc_makefiles} "`{ for item in ${map_list} ; do echo ${item} | sed 's,^,doc/,; s,$,/Makefile,;' ; done ; } | tr '\n' ' '`
   html_files="${html_files} "`{ for item in ${map_list} ; do echo ${item} | sed 's/$/.html/;' ; done ; } | tr '\n' ' '`
   man1_files="${man1_files} "`{ for item in ${map_list} ; do echo ${item} | sed 's/$/.1/;' ; done ; } | tr '\n' ' '`
-  tool_subdirs="${tool_subdirs} ftimes-cat ftimes-cmp2diff ftimes-encoder ftimes-grabber ftimes-proximo ftimes-sizimus ftimes-sortini ftimes-xformer ftimes-xpa hashcp map tarmap zipmap"
+  tool_subdirs="${tool_subdirs} ftimes-bimvl ftimes-cat ftimes-cmp2diff ftimes-encoder ftimes-grabber ftimes-proximo ftimes-sizimus ftimes-sortini ftimes-xformer ftimes-xpa hashcp map tarmap zipmap"
   tool_config_subdirs="${tool_config_subdirs} ftimes-cat ftimes-xpa hashcp tarmap"
-  tool_makefiles="${tool_makefiles} tools/ftimes-cat/Makefile tools/ftimes-cmp2diff/Makefile tools/ftimes-encoder/Makefile tools/ftimes-grabber/Makefile tools/ftimes-proximo/Makefile tools/ftimes-sizimus/Makefile tools/ftimes-sortini/Makefile tools/ftimes-xformer/Makefile tools/ftimes-xpa/Makefile tools/hashcp/Makefile tools/map/Makefile tools/tarmap/Makefile tools/zipmap/Makefile"
+  tool_makefiles="${tool_makefiles} tools/ftimes-bimvl/Makefile tools/ftimes-cat/Makefile tools/ftimes-cmp2diff/Makefile tools/ftimes-encoder/Makefile tools/ftimes-grabber/Makefile tools/ftimes-proximo/Makefile tools/ftimes-sizimus/Makefile tools/ftimes-sortini/Makefile tools/ftimes-xformer/Makefile tools/ftimes-xpa/Makefile tools/hashcp/Makefile tools/map/Makefile tools/tarmap/Makefile tools/zipmap/Makefile"
   additional_testdirs="${additional_testdirs} ftimes-encoder ftimes-xformer tarmap"
   test_makefiles="
 ${test_makefiles}
