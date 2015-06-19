@@ -1,0 +1,22 @@
+=head1 SYNOPSIS
+
+B<ftimes> B<--cfgtest> B<file> B<mode> B<[-s]>
+
+B<ftimes> B<--compare> B<mask> B<baseline> B<snapshot> B<[-l {0-6}]>
+
+B<ftimes> B<--decode> B<snapshot> B<[-l {0-6}]>
+
+B<ftimes> B<--dig> B<file> B<[-l {0-6}]> B<[target [...]]>
+
+B<ftimes> B<--digauto> B<file> B<[-l {0-6}]> B<[target [...]]>
+
+B<ftimes> B<--get> B<file> B<[-l {0-6}]>
+
+B<ftimes> B<--mad> B<file> B<[-l {0-6}]> B<[target [...]]>
+
+B<ftimes> B<--map> B<file> B<[-l {0-6}]> B<[target [...]]>
+
+B<ftimes> B<--mapauto> B<mask> B<[-l {0-6}]> B<[target [...]]>
+
+B<ftimes> B<{-v|--version}>
+

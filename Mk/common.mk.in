@@ -1,0 +1,36 @@
+######################################################################
+#
+# $Id: common.mk.in,v 1.7 2008/05/19 00:44:38 mavrik Exp $
+#
+######################################################################
+#
+# Purpose: Common Makefile macros.
+#
+######################################################################
+
+CC=@CC@
+
+FTIMES=${PROJECT_ROOT}/src/ftimes
+
+FTIMES_CRV2RAW=${PROJECT_TOPDIR}/tools/dig/ftimes-crv2raw.pl
+
+FTIMES_ENCODER=${PROJECT_TOPDIR}/tools/ftimes-encoder/ftimes-encoder
+
+FTIMES_XFORMER=${PROJECT_TOPDIR}/tools/ftimes-xformer/ftimes-xformer
+
+HIPDIG=${PROJECT_TOPDIR}/tools/dig/hipdig.pl
+
+TARMAP=${PROJECT_ROOT}/tools/tarmap/tarmap
+
+TEST_HARNESS=${PROJECT_TOPDIR}/utils/test_harness
+
+PROJECT_DEFAULT_INSTALL_ROOT=/usr/local/ftimes
+
+SUBDIR_MAKE=cd $${cwd}/$${subdir} && ${MAKE} $@
+
+SUBDIR_TRACE=echo "===> $${subdir}"
+
+TARGET_MAKE=cd $${cwd}/$${target} && ${MAKE} $@
+
+TARGET_TRACE=echo "---> $${target}"
+

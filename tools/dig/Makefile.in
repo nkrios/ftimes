@@ -1,0 +1,49 @@
+########################################################################
+#
+# $Id: Makefile.in,v 1.18 2012/02/08 05:50:30 mavrik Exp $
+#
+########################################################################
+#
+# Purpose: Makefile for the project's dig directory.
+#
+########################################################################
+
+#.SILENT:
+
+PREFIX			= @prefix@
+exec_prefix		= @exec_prefix@
+bindir			= @bindir@
+srcdir			= @srcdir@
+VPATH			= ${srcdir}
+
+EXTENSION		= @extension@
+
+INSTALL			= @INSTALL@
+
+INSTALL_PREFIX		= ${DESTDIR}${PREFIX}/bin
+
+SCRIPT_FILES		= \
+			ftimes-crv2dbi.pl \
+			ftimes-crv2raw.pl \
+			ftimes-dig2ctx.pl \
+			ftimes-dig2dbi.pl \
+			hipdig.pl
+
+all:
+
+test:
+
+install-prefix:
+	@umask 22 ; if [ ! -d ${INSTALL_PREFIX} ] ; then mkdir -p ${INSTALL_PREFIX} ; fi
+
+install: ${SCRIPT_FILES} install-prefix
+	@for i in ${SCRIPT_FILES} ; do \
+		if [ -f ${srcdir}/$${i} ] ; then file=${srcdir}/$${i} ; else file=$${i} ; fi ; \
+		${INSTALL} -m 755 $${file} ${INSTALL_PREFIX} ; \
+	done
+
+clean:
+
+clean-all: clean
+	rm -f Makefile
+
